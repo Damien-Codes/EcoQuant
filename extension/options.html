@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Réglages — EcoQuant</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { font-size: 14px; }
+    .wrap { max-width: 700px; margin: 0 auto; padding: 32px 20px 60px; }
+    .top { display: flex; align-items: center; gap: 14px; margin-bottom: 26px; }
+    .top img { width: 44px; height: 44px; }
+    .top h1 { margin: 0; font-size: 22px; }
+    .top p { margin: 2px 0 0; color: var(--muted); }
+    #saved { margin-left: auto; color: var(--ok); font-weight: 600; font-size: 13px; opacity: 0; transition: opacity .2s; }
+    #saved.show { opacity: 1; }
+
+    section { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; margin-bottom: 14px; }
+    section h2 { margin: 0; font-size: 15px; }
+    section > p { margin: 4px 0 14px; color: var(--muted); font-size: 13px; }
+    .hint { color: var(--faint); font-size: 12px; margin-top: 10px; }
+
+    .impact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+    .impact-card { display: block; border: 1px solid var(--border); border-radius: 10px; padding: 11px 12px; cursor: pointer; background: var(--bg); }
+    .impact-card input { position: absolute; opacity: 0; pointer-events: none; }
+    .impact-card .h { display: flex; align-items: center; gap: 8px; font-weight: 700; }
+    .impact-card small { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; }
+    .impact-card:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+    .impact-card:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chips .chip { font-size: 13px; padding: 6px 12px; }
+    .links { display: flex; gap: 12px; margin-top: 10px; font-size: 12px; }
+    .links button { background: none; border: 0; color: var(--accent); padding: 0; }
+
+    .opt { display: flex; align-items: center; gap: 14px; padding: 11px 0; border-top: 1px solid var(--border); }
+    .opt:first-of-type { border-top: 0; padding-top: 2px; }
+    .opt .txt { flex: 1; }
+    .opt .txt b { display: block; font-weight: 600; }
+    .opt .txt small { color: var(--muted); font-size: 12px; }
+    .sub { display: flex; align-items: center; gap: 12px; padding: 0 0 10px; }
+    .sub input[type=range] { flex: 1; max-width: 260px; accent-color: var(--accent); }
+    input[type=time] { background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 6px 8px; font: inherit; }
+
+    #scheduled { margin: 12px 0 0; padding: 0; list-style: none; }
+    #scheduled li { display: flex; gap: 10px; align-items: center; padding: 7px 0; border-top: 1px solid var(--border); font-size: 13px; }
+    #scheduled li:first-child { border-top: 0; }
+    #scheduled .t { width: 150px; flex: none; color: var(--muted); }
+    #scheduled .n { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .warn { color: var(--med); font-size: 12px; margin-top: 8px; }
+    .warn:empty { display: none; }
+    .note { color: var(--faint); font-size: 12px; text-align: center; margin-top: 24px; line-height: 1.6; }
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <img src="icons/icon128.png" alt="">
+      <div>
+        <h1>EcoQuant</h1>
+        <p>Choisis les news qui comptent pour toi et quand être prévenu.</p>
+      </div>
+      <span id="saved">Enregistré ✓</span>
+    </div>
+
+    <section>
+      <h2>Niveaux d'impact</h2>
+      <p>Tu reçois une alerte pour les news de ces niveaux.</p>
+      <div class="impact-grid" id="impacts"></div>
+      <div class="warn" id="warnImpacts"></div>
+    </section>
+
+    <section>
+      <h2>Devises</h2>
+      <p>Seules les news de ces devises déclenchent une alerte.</p>
+      <div class="chips" id="currencies"></div>
+      <div class="links"><button id="allCcy">Toutes</button><button id="noCcy">Aucune</button></div>
+      <div class="hint">L'or (XAU/USD) et les indices US (NASDAQ, S&amp;P 500) réagissent surtout aux news USD.</div>
+      <div class="warn" id="warnCcy"></div>
+    </section>
+
+    <section>
+      <h2>Quand me prévenir</h2>
+      <p>Tu peux en cocher plusieurs : une alerte part pour chaque délai.</p>
+      <div class="chips" id="leads"></div>
+      <div class="warn" id="warnLeads"></div>
+    </section>
+
+    <section>
+      <h2>Type d'alerte</h2>
+      <p>Comment l'extension te prévient.</p>
+      <label class="opt">
+        <div class="txt"><b>Notification système</b><small>Notification Windows / macOS en bas de l'écran. Clic → ouvre Investing.com.</small></div>
+        <span class="switch"><input type="checkbox" id="notifySystem"><span></span></span>
+      </label>
+      <label class="opt">
+        <div class="txt"><b>Fenêtre pop-up</b><small>Petite fenêtre au premier plan avec compte à rebours, impossible à rater.</small></div>
+        <span class="switch"><input type="checkbox" id="notifyWindow"><span></span></span>
+      </label>
+      <label class="opt">
+        <div class="txt"><b>Son</b><small>Petit carillon au moment de l'alerte.</small></div>
+        <span class="switch"><input type="checkbox" id="sound"><span></span></span>
+      </label>
+      <div class="sub" id="volumeRow">
+        <small style="color:var(--muted)">Volume</small>
+        <input type="range" id="volume" min="0" max="1" step="0.05">
+        <button class="btn" id="testSound">▶ Écouter</button>
+      </div>
+      <label class="opt">
+        <div class="txt"><b>Résultat après publication</b><small>1 min après la news : chiffre réel vs prévision, ▲ meilleur / ▼ moins bon que prévu pour la devise. Source Investing.com uniquement.</small></div>
+        <span class="switch"><input type="checkbox" id="showResult"><span></span></span>
+      </label>
+      <div class="warn" id="warnType"></div>
+    </section>
+
+    <section>
+      <h2>Heures silencieuses</h2>
+      <p>Aucune alerte pendant cette plage (pratique pour les news asiatiques la nuit).</p>
+      <label class="opt">
+        <div class="txt"><b>Activer</b></div>
+        <span class="switch"><input type="checkbox" id="quietEnabled"><span></span></span>
+      </label>
+      <div class="sub">
+        <small style="color:var(--muted)">De</small><input type="time" id="quietStart">
+        <small style="color:var(--muted)">à</small><input type="time" id="quietEnd">
+      </div>
+    </section>
+
+    <section id="sourceSection">
+      <h2>Source du calendrier</h2>
+      <p>D'où viennent les news. Les heures et niveaux d'impact sont ceux du site choisi.</p>
+      <div class="impact-grid" id="sources"></div>
+      <div class="hint" id="sourceStatus"></div>
+    </section>
+
+    <section>
+      <h2>Tester</h2>
+      <p>Déclenche une fausse alerte pour voir à quoi ça ressemble.</p>
+      <button class="btn primary" id="testAlert">Lancer une alerte de test</button>
+      <button class="btn" id="testResult">Tester un résultat</button>
+      <h2 style="margin-top:20px">Prochaines alertes programmées</h2>
+      <ul id="scheduled"></ul>
+    </section>
+
+    <p class="note">
+      Le navigateur doit rester ouvert (même réduit) pour recevoir les alertes.<br>
+      Calendrier rafraîchi toutes les heures · heures affichées dans ton fuseau horaire.<br>
+      <a href="#" id="siteLink" target="_blank" rel="noopener">Site de l'extension</a> · Outil d'information uniquement, pas un conseil en investissement. Le trading comporte un risque de perte en capital.
+    </p>
+  </div>
+  <script src="common.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

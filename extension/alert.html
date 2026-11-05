@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>News dans quelques minutes</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    html, body { overflow: hidden; }
+    body { min-width: 380px; }
+    .stripe { height: 4px; background: var(--c, var(--high)); }
+    header { padding: 16px 20px 12px; }
+    .kicker { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--c, var(--high)); }
+    .kicker .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c, var(--high)); animation: pulse 1.2s ease-in-out infinite; }
+    @keyframes pulse { 50% { opacity: .25; } }
+    .big { font-size: 38px; font-weight: 800; letter-spacing: -.02em; margin-top: 4px; line-height: 1.1; }
+    .sub { color: var(--muted); margin-top: 2px; }
+    .sub b { color: var(--text); }
+    ul { list-style: none; margin: 0; padding: 4px 12px; }
+    li { display: flex; align-items: center; gap: 10px; padding: 9px 8px; border-top: 1px solid var(--border); }
+    li:first-child { border-top: 0; }
+    li .title { flex: 1; min-width: 0; }
+    li .title div { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    li .title small { color: var(--faint); font-size: 12px; }
+    footer { display: flex; gap: 8px; padding: 12px 20px 16px; }
+    footer .sp { flex: 1; }
+    .test { margin-left: auto; color: var(--faint); border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; letter-spacing: .04em; }
+  </style>
+</head>
+<body>
+  <div class="stripe"></div>
+  <header>
+    <div class="kicker"><span class="dot"></span><span id="kicker">News à venir</span><span class="test" id="testTag" hidden>TEST</span></div>
+    <div class="big num" id="cd">--:--</div>
+    <div class="sub" id="sub"></div>
+  </header>
+  <ul id="events"></ul>
+  <footer>
+    <button class="btn" id="snooze" hidden>Me rappeler à l'heure</button>
+    <a class="btn" id="open" href="https://www.investing.com/economic-calendar/" target="_blank" style="text-decoration:none;color:var(--text)">Investing.com ↗</a>
+    <span class="sp"></span>
+    <button class="btn primary" id="ok">OK</button>
+  </footer>
+  <script src="common.js"></script>
+  <script src="alert.js"></script>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>EcoQuant</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    html, body { overflow-x: hidden; }
+    body { width: 400px; }
+    header {
+      display: flex; align-items: center; gap: 10px; padding: 12px 12px 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    header img { width: 26px; height: 26px; }
+    header .t { flex: 1; min-width: 0; }
+    header h1 { font-size: 14px; margin: 0; font-weight: 700; }
+    header small { color: var(--faint); font-size: 11px; }
+    #refresh.spin svg { animation: spin .8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #next { margin: 12px 12px 0; padding: 11px 12px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--c, var(--border)); }
+    #next .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+    #next .what { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+    #next .what b { font-size: 13px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #next .when { display: flex; justify-content: space-between; align-items: baseline; margin-top: 6px; color: var(--muted); font-size: 12px; }
+    #next .cd { font-size: 18px; font-weight: 700; color: var(--text); }
+    #next.empty { color: var(--muted); border-left-color: var(--border); }
+
+    .filters { display: flex; align-items: center; gap: 6px; padding: 12px 12px 8px; flex-wrap: wrap; }
+    .filters .sp { flex: 1; }
+    .filters label { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; cursor: pointer; }
+
+    #error { margin: 0 12px 8px; padding: 8px 10px; border-radius: 8px; background: rgba(239,68,68,.12); color: #fca5a5; font-size: 12px; }
+    #error:empty { display: none; }
+
+    #list { max-height: 330px; overflow-y: auto; padding: 0 6px 6px; }
+    .day { position: sticky; top: 0; background: var(--bg); padding: 10px 8px 5px; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; z-index: 1; }
+    .row { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 8px; }
+    .row:hover { background: var(--surface); }
+    .row .time { width: 38px; flex: none; color: var(--muted); font-size: 12px; }
+    .row .title { flex: 1; min-width: 0; }
+    .row .title div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .row .title small { display: block; color: var(--faint); font-size: 11px; }
+    .row .soon { color: var(--med); font-weight: 600; }
+    .row.past { opacity: .4; }
+    .row.dim .title div { color: var(--muted); }
+    .row.muted .title div { text-decoration: line-through; color: var(--faint); }
+    .bell { width: 26px; height: 26px; flex: none; }
+    .bell.off { color: var(--faint); }
+    .bell:not(.off) { color: var(--accent); }
+    .placeholder { width: 26px; flex: none; }
+    .empty-list { padding: 24px 16px; text-align: center; color: var(--muted); }
+
+    .tabs { display: flex; gap: 4px; padding: 8px 12px 0; border-bottom: 1px solid var(--border); }
+    .tabs button { background: none; border: 0; border-bottom: 2px solid transparent; padding: 6px 10px 8px; color: var(--muted); font-weight: 600; }
+    .tabs button.on { color: var(--text); border-bottom-color: var(--accent); }
+    .tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; border-radius: 6px; }
+
+    footer { display: flex; justify-content: space-between; padding: 9px 14px; border-top: 1px solid var(--border); color: var(--faint); font-size: 11px; }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="icons/icon48.png" alt="">
+    <div class="t">
+      <h1>EcoQuant</h1>
+      <small id="updated">Chargement…</small>
+    </div>
+    <button class="icon-btn" id="refresh" title="Rafraîchir le calendrier">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+    </button>
+    <button class="icon-btn" id="settings" title="Réglages">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1.08 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button class="on" data-tab="cal" role="tab" aria-selected="true">Calendrier</button>
+    <button data-tab="calc" role="tab" aria-selected="false">Calculateur de position</button>
+  </nav>
+
+  <div id="tab-cal">
+  <section id="next" class="empty">Chargement…</section>
+
+  <div class="filters">
+    <div id="impactChips" style="display:flex;gap:6px"></div>
+    <span class="sp"></span>
+    <label title="Afficher aussi les news hors de tes filtres (sans alerte)">
+      Tout afficher
+      <span class="switch"><input type="checkbox" id="showAll"><span></span></span>
+    </label>
+  </div>
+
+  <div id="error"></div>
+  <main id="list"></main>
+  </div>
+
+  <div id="tab-calc" hidden></div>
+
+  <footer>
+    <span id="sourceLabel">Source : — · heure locale</span>
+    <a href="#" id="siteLink" target="_blank" rel="noopener">Site ↗</a>
+  </footer>
+
+  <script src="common.js"></script>
+  <script src="calc.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

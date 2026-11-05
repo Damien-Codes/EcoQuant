@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "EcoQuant – Economic News Alerts",
+  "short_name": "EcoQuant",
+  "version": "1.3.0",
+  "description": "Calendrier économique avec alertes pop-up avant les news (10, 30 min…), filtrées par impact et devise, résultat après publication et calculateur de position.",
+  "permissions": ["alarms", "notifications", "storage", "offscreen", "declarativeNetRequestWithHostAccess"],
+  "host_permissions": ["https://www.investing.com/*", "https://nfs.faireconomy.media/*", "https://api.frankfurter.dev/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "EcoQuant",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

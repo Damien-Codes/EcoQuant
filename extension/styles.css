@@ -1,0 +1,128 @@
+:root {
+  --bg: #0b1120;
+  --surface: #121a2b;
+  --surface-2: #19233a;
+  --border: #243049;
+  --text: #e6eaf2;
+  --muted: #8d99b0;
+  --faint: #5d6984;
+  --accent: #3b82f6;
+  --accent-soft: rgba(59, 130, 246, .16);
+  --high: #ef4444;
+  --med: #f59e0b;
+  --low: #eab308;
+  --ok: #22c55e;
+  --radius: 10px;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 13px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+button { font: inherit; color: inherit; cursor: pointer; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.num { font-variant-numeric: tabular-nums; }
+
+/* Barres d'impact façon Investing.com */
+.bars { display: inline-flex; gap: 2px; align-items: flex-end; height: 12px; flex: none; }
+.bars i { width: 4px; border-radius: 1px; background: var(--border); }
+.bars i:nth-child(1) { height: 6px; }
+.bars i:nth-child(2) { height: 9px; }
+.bars i:nth-child(3) { height: 12px; }
+.bars i.on { background: var(--c); }
+.bars.holiday {
+  font-size: 9px; font-weight: 700; color: var(--muted); border: 1px solid var(--border);
+  border-radius: 3px; padding: 0 3px; height: 14px; line-height: 12px;
+}
+
+.ccy {
+  display: inline-block; min-width: 34px; text-align: center; flex: none;
+  font-size: 11px; font-weight: 700; letter-spacing: .02em;
+  padding: 2px 5px; border-radius: 5px; background: var(--surface-2); color: var(--text);
+}
+
+/* Boutons */
+.btn {
+  border: 1px solid var(--border); background: var(--surface-2); border-radius: 8px;
+  padding: 7px 12px; font-weight: 600; transition: background .15s, border-color .15s;
+}
+.btn:hover { border-color: var(--faint); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.primary:hover { background: #2f6fe0; }
+.btn:disabled { opacity: .45; cursor: default; }
+.icon-btn {
+  width: 30px; height: 30px; display: grid; place-items: center; border-radius: 8px;
+  border: 1px solid transparent; background: transparent; color: var(--muted);
+}
+.icon-btn:hover { background: var(--surface-2); color: var(--text); }
+.icon-btn svg { width: 16px; height: 16px; }
+
+/* Puces sélectionnables */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px;
+  border: 1px solid var(--border); background: transparent; color: var(--muted); font-weight: 600; font-size: 12px;
+  user-select: none;
+}
+.chip:hover { border-color: var(--faint); color: var(--text); }
+.chip.on { background: var(--accent-soft); border-color: var(--accent); color: var(--text); }
+
+/* Interrupteur */
+.switch { position: relative; width: 36px; height: 20px; flex: none; }
+.switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.switch span {
+  position: absolute; inset: 0; border-radius: 999px; background: var(--border); transition: background .15s; cursor: pointer;
+}
+.switch span::after {
+  content: ""; position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%;
+  background: #fff; transition: transform .15s;
+}
+.switch input:checked + span { background: var(--accent); }
+.switch input:checked + span::after { transform: translateX(16px); }
+.switch input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Chiffre réel après publication */
+.act-up { color: var(--ok); }
+.act-down { color: var(--high); }
+.act-flat { color: var(--text); }
+
+/* Calculateur de position (onglet du popup) */
+.calc { padding: 12px; }
+.calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.calc label { display: flex; flex-direction: column; gap: 4px; color: var(--muted); font-size: 11px; font-weight: 600; min-width: 0; }
+.calc label small { font-weight: 500; color: var(--faint); }
+.calc .wide { grid-column: 1 / -1; }
+.calc input, .calc select {
+  width: 100%; min-width: 0; background: var(--bg); border: 1px solid var(--border); color: var(--text);
+  border-radius: 8px; padding: 7px 9px; font: inherit; font-size: 13px; font-variant-numeric: tabular-nums;
+}
+.calc input:focus, .calc select:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
+.calc .in-unit { display: flex; }
+.calc .in-unit input { border-radius: 8px 0 0 8px; }
+.calc .in-unit select { flex: none; width: 86px; border-left: 0; border-radius: 0 8px 8px 0; background: var(--surface-2); }
+.calc-out { margin-top: 12px; }
+.calc-empty { color: var(--muted); padding: 14px; text-align: center; border: 1px dashed var(--border); border-radius: var(--radius); }
+.calc-main { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: var(--radius);
+  background: var(--accent-soft); border: 1px solid var(--accent); }
+.calc-main span { color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+.calc-main b { font-size: 26px; line-height: 1.15; }
+.calc-main b small { font-size: 13px; color: var(--muted); font-weight: 600; }
+.calc-main em { font-style: normal; color: var(--muted); font-size: 12px; }
+.calc-main.warn { background: rgba(245, 158, 11, .12); border-color: var(--med); }
+.calc-main.warn em { color: var(--med); }
+.calc-kv { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 8px 0 0; }
+.calc-kv div { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; }
+.calc-kv dt { color: var(--muted); font-size: 11px; }
+.calc-kv dd { margin: 2px 0 0; font-weight: 700; font-size: 14px; }
+.calc-kv dd small { color: var(--faint); font-weight: 500; font-size: 11px; }
+.calc-adv { margin-top: 12px; border-top: 1px solid var(--border); padding-top: 8px; }
+.calc-adv summary { cursor: pointer; color: var(--muted); font-weight: 600; font-size: 12px; }
+.calc-adv label { margin-top: 10px; }
+.calc-note { color: var(--faint); font-size: 11px; margin: 12px 0 0; }
